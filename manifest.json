@@ -1,0 +1,21 @@
+{
+  "id": "date-night-planner",
+  "name": "Date Night Planner",
+  "version": "1.0.0",
+  "description": "Build a shared catalog of date ideas and let the app pick one when you need inspiration.",
+  "entrypoint": "index.html",
+  "runtime": "static",
+  "category": "couple",
+  "tags": ["couples"],
+  "data_access": {
+    "reads": ["family.members"],
+    "writes": []
+  },
+  "permissions": {
+    "default_audience": "adults",
+    "requires_approval": false
+  },
+  "storage": "db",
+  "icon": "🌙",
+  "nav": { "label": "Date Nights" }
+}
