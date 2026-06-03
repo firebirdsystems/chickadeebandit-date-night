@@ -376,24 +376,27 @@
       const result = validateIdea(titleInput?.value);
       if (!result.valid) { titleInput?.focus(); return; }
 
-      const btn = modalEl?.querySelector(".modal-actions .btn-primary");
-      if (btn) { btn.disabled = true; btn.textContent = "Adding…"; }
+      const id    = crypto.randomUUID();
+      const now   = new Date().toISOString();
+      const title = result.trimmed;
+      const notes = document.getElementById("f-notes")?.value.trim() ?? "";
+      const tags  = JSON.stringify(draftTags);
+
+      // Optimistic: add to list, close modal, render immediately
+      const optimisticIdea = { id, created_by: ME?.id ?? "demo", title, notes, tags, done_at: null, rating: null, created_at: now };
+      ideas = [optimisticIdea, ...ideas];
+      closeModal();
+      renderIdeas();
+
+      if (!ME) return;
       try {
-        if (ME) {
-          await db(
-            "INSERT INTO date_ideas (id, created_by, title, notes, tags, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-            [crypto.randomUUID(), ME.id, result.trimmed,
-             document.getElementById("f-notes")?.value.trim() ?? "",
-             JSON.stringify(draftTags),
-             new Date().toISOString()]
-          );
-          await loadIdeas();
-        }
-        closeModal();
+        await db(
+          "INSERT INTO date_ideas (id, created_by, title, notes, tags, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+          [id, ME.id, title, notes, tags, now]
+        );
+      } catch {
+        ideas = ideas.filter(i => i !== optimisticIdea);
         renderIdeas();
-      } catch(e) {
-        if (btn) { btn.disabled = false; btn.textContent = "Add"; }
-        throw e;
       }
     };
 
@@ -455,23 +458,27 @@
     };
 
     window.confirmDone = async function(id) {
-      const btn = document.getElementById("confirm-done-btn");
-      if (btn) { btn.disabled = true; btn.textContent = "Saving…"; }
+      const rating = window._draftRating ?? null;
+      const now    = new Date().toISOString();
+      const idea   = ideas.find(i => i.id === id);
+      const origDoneAt = idea?.done_at;
+      const origRating = idea?.rating;
+
+      // Optimistic: update in memory, close modal, render immediately
+      if (idea) { idea.done_at = now; idea.rating = rating; }
+      window._draftRating = null;
+      closeModal();
+      renderIdeas();
+
+      if (!ME) return;
       try {
-        const rating = window._draftRating ?? null;
-        if (ME) {
-          await db(
-            "UPDATE date_ideas SET done_at = ?, rating = ? WHERE id = ?",
-            [new Date().toISOString(), rating, id]
-          );
-          await loadIdeas();
-        }
-        window._draftRating = null;
-        closeModal();
+        await db(
+          "UPDATE date_ideas SET done_at = ?, rating = ? WHERE id = ?",
+          [now, rating, id]
+        );
+      } catch {
+        if (idea) { idea.done_at = origDoneAt; idea.rating = origRating; }
         renderIdeas();
-      } catch(e) {
-        if (btn) { btn.disabled = false; btn.textContent = "Mark as Done"; }
-        throw e;
       }
     };
 
