@@ -278,7 +278,7 @@
     async function loadPartner() {
       if (!ME) return null;
       const { rows } = await db(
-        "SELECT partner_id FROM partner_config WHERE member_id = ?",
+        "SELECT partner_id FROM app_date_night_planner__partner_config WHERE member_id = ?",
         [ME.id]
       );
       return rows.length ? (members.find(m => m.id === rows[0].partner_id) ?? null) : null;
@@ -294,7 +294,7 @@
         return;
       }
       const { rows } = await db(
-        "SELECT * FROM date_ideas WHERE created_by IN (?, ?) ORDER BY created_at DESC",
+        "SELECT * FROM app_date_night_planner__date_ideas WHERE created_by IN (?, ?) ORDER BY created_at DESC",
         [ME.id, partner.id]
       );
       ideas = rows;
@@ -309,8 +309,8 @@
       try {
         if (ME) {
           await db(
-            `INSERT INTO partner_config (member_id, partner_id) VALUES (?, ?)
-             ON CONFLICT (member_id, household_id) DO UPDATE SET partner_id = EXCLUDED.partner_id`,
+            `INSERT INTO app_date_night_planner__partner_config (member_id, partner_id) VALUES (?, ?)
+             ON CONFLICT (member_id) DO UPDATE SET partner_id = EXCLUDED.partner_id`,
             [ME.id, partnerId]
           );
         }
@@ -391,7 +391,7 @@
       if (!ME) return;
       try {
         await db(
-          "INSERT INTO date_ideas (id, created_by, title, notes, tags, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+          "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at) VALUES (?, ?, ?, ?, ?, ?)",
           [id, ME.id, title, notes, tags, now]
         );
       } catch {
@@ -473,7 +473,7 @@
       if (!ME) return;
       try {
         await db(
-          "UPDATE date_ideas SET done_at = ?, rating = ? WHERE id = ?",
+          "UPDATE app_date_night_planner__date_ideas SET done_at = ?, rating = ? WHERE id = ?",
           [now, rating, id]
         );
       } catch {
