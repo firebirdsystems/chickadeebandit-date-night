@@ -203,6 +203,7 @@
         <span class="pick-label">Who is your partner?</span>
         <div id="setup-members" class="member-list"></div>
         <button class="btn-primary" style="width:100%;justify-content:center" onclick="savePartner()">Get Started</button>
+        <p id="setup-error" style="color:#dc2626;font-size:.85rem;margin-top:10px;display:none"></p>
       </div>
     </div>
   </div>
@@ -277,11 +278,11 @@
     }
 
     async function loadPartner() {
-      if (!ME) return null;
-      const res = await fetch(`/run/${APP_ID}/api/partner`);
-      const status = res.ok ? await res.json() : { partner_id: null, reciprocal: false };
-      partnerReciprocal = status.reciprocal;
-      return status.partner_id ? (members.find(m => m.id === status.partner_id) ?? null) : null;
+      if (!ME) return { partner_id: null, reciprocal: false };
+      try {
+        const res = await fetch(`/run/${APP_ID}/api/partner`);
+        return res.ok ? await res.json() : { partner_id: null, reciprocal: false };
+      } catch { return { partner_id: null, reciprocal: false }; }
     }
 
     async function loadIdeas() {
@@ -303,6 +304,8 @@
     window.savePartner = async function() {
       const sel = document.querySelector('#setup-members input[type="radio"]:checked');
       if (!sel) return;
+      const errEl = document.getElementById("setup-error");
+      if (errEl) errEl.style.display = "none";
       const partnerId = sel.value;
       const btn = document.querySelector('#view-setup .btn-primary');
       if (btn) { btn.disabled = true; btn.textContent = "Saving…"; }
@@ -325,7 +328,7 @@
         showMain();
       } catch(e) {
         if (btn) { btn.disabled = false; btn.textContent = "Get Started"; }
-        throw e;
+        if (errEl) { errEl.textContent = e?.message ?? "Could not save partner"; errEl.style.display = "block"; }
       }
     };
 
@@ -446,7 +449,7 @@
           ${pick.notes ? `<div class="reveal-notes">${esc(pick.notes)}</div>` : ""}
           <div class="reveal-actions">
             <button class="btn-secondary" onclick="surpriseMe()">Try another</button>
-            <button class="btn-primary" onclick="markDone('${esc(pick.id)}')">We did this! ✓</button>
+            <button class="btn-primary" data-action="done" data-id="${esc(pick.id)}">We did this! ✓</button>
           </div>
         </div>
       `);
@@ -465,7 +468,7 @@
         </div>
         <div class="modal-actions">
           <button class="btn-secondary" onclick="closeModal()">Cancel</button>
-          <button id="confirm-done-btn" class="btn-primary" onclick="confirmDone('${esc(id)}')">Mark as Done</button>
+          <button id="confirm-done-btn" class="btn-primary" data-action="confirm-done" data-id="${esc(id)}">Mark as Done</button>
         </div>
       `);
     };
@@ -561,11 +564,12 @@
       const tags    = parseTags(idea.tags);
       const tagsHtml = tags.length ? `<div class="idea-tags">${tags.map(t => `<span class="idea-tag">${esc(t)}</span>`).join("")}</div>` : "";
       const notesHtml = idea.notes ? `<div class="idea-notes">${esc(idea.notes)}</div>` : "";
-      const starsHtml = idea.rating ? `<span class="stars">${"★".repeat(idea.rating)}${"☆".repeat(5 - idea.rating)}</span>` : "";
+      const r = Math.min(5, Math.max(0, Math.round(Number(idea.rating)) || 0));
+      const starsHtml = r ? `<span class="stars">${"★".repeat(r)}${"☆".repeat(5 - r)}</span>` : "";
       const footer = isDone
         ? `<div class="idea-footer"><span class="idea-meta">${formatRelativeDate(idea.done_at)}</span>${starsHtml}</div>`
         : `<div class="idea-footer"><span class="idea-meta">${formatRelativeDate(idea.created_at)}</span>
-             <button class="btn-ghost" onclick="markDone('${esc(idea.id)}')">✓ Done</button>
+             <button class="btn-ghost" data-action="done" data-id="${esc(idea.id)}">✓ Done</button>
            </div>`;
       return `
         <div class="idea-card${isDone ? " done" : ""}">
@@ -574,10 +578,20 @@
         </div>`;
     }
 
+    // ── Delegated clicks for DB-derived ids (avoids inline-handler injection) ────
+    document.addEventListener("click", (e) => {
+      const el = e.target.closest("[data-action]");
+      if (!el) return;
+      const id = el.dataset.id;
+      if (el.dataset.action === "done") window.markDone(id);
+      else if (el.dataset.action === "confirm-done") window.confirmDone(id);
+    });
+
     // ── Init ──────────────────────────────────────────────────────────────────
     (async () => {
-      await loadMembers();
-      partner = await loadPartner();
+      const [, status] = await Promise.all([loadMembers(), loadPartner()]);
+      partnerReciprocal = status.reciprocal;
+      partner = status.partner_id ? (members.find(m => m.id === status.partner_id) ?? null) : null;
       if (!partner || !partnerReciprocal) {
         window.showSetup();
       } else {
