@@ -1,5 +1,6 @@
 {
   "id": "date-night-planner",
+  "contexts": ["household", "shared_space"],
   "name": "Date Night Planner",
   "version": "1.0.0",
   "description": "Build a shared catalog of date ideas and let the app pick one when you need inspiration.",
