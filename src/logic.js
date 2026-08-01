@@ -16,3 +16,12 @@ export function pickRandom(ideas) {
   if (!ideas.length) return null;
   return ideas[Math.floor(Math.random() * ideas.length)];
 }
+
+/**
+ * Fields the in-app search matches against (see hub-sdk `searchMatch`).
+ * Notes and tags count as well as the title — ideas get browsed as
+ * "something cheap" or "outdoors", which are tags.
+ */
+export function searchableFields(item) {
+  return [item.title, item.notes, item.tags];
+}

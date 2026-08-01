@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { TAGS, validateIdea, parseTags, pickRandom } from "../src/logic.js";
+import { TAGS, validateIdea, parseTags, pickRandom, searchableFields } from "../src/logic.js";
 
 describe("validateIdea", () => {
   it("rejects empty/whitespace/null titles", () => {
@@ -53,5 +53,13 @@ describe("TAGS", () => {
   it("stays a non-empty list of unique strings", () => {
     expect(TAGS.length).toBeGreaterThan(0);
     expect(new Set(TAGS).size).toBe(TAGS.length);
+  });
+});
+
+describe("searchableFields", () => {
+  it("matches on notes and tags, not just the idea title", () => {
+    const fields = searchableFields({ title: "Picnic", notes: "the bandstand one", tags: "outdoors,cheap" });
+    expect(fields).toContain("the bandstand one");
+    expect(fields).toContain("outdoors,cheap");
   });
 });

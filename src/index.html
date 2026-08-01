@@ -189,6 +189,13 @@
     .star-btn { background: transparent; border: none; cursor: pointer; font-size: 1.4rem; padding: 2px; line-height: 1; transition: transform .1s; }
     .star-btn:hover { transform: scale(1.15); }
     .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+    .search-row { margin-bottom: 12px; }
+    .search-input {
+      width: 100%; border: 1.5px solid var(--border-mid, var(--border, #d1d5db));
+      border-radius: 8px; padding: 9px 11px; font: inherit;
+      background: var(--surface, var(--card, #fff)); color: var(--text, inherit);
+    }
+    .search-input:focus { outline: none; border-color: var(--accent, #6366f1); }
   </style>
 </head>
 <body>
@@ -229,6 +236,9 @@
         <p>Not sure what to do? Let us pick.</p>
         <button class="btn-primary" onclick="surpriseMe()">✨ Surprise Me</button>
       </div>
+      <div class="search-row" id="search-row" style="display:none">
+        <input id="search" class="search-input" type="search" placeholder="Search ideas…" aria-label="Search ideas" />
+      </div>
       <div id="ideas-list" class="ideas-list"></div>
     </div>
     <div id="tab-history" class="tab-panel">
@@ -237,8 +247,8 @@
   </div>
 
   <script type="module">
-    import { esc, initial, memberColor, formatRelativeDate } from "/hub-sdk.js";
-    import { TAGS, validateIdea, parseTags, pickRandom } from "./logic.js";
+    import { esc, initial, memberColor, formatRelativeDate, searchMatch } from "/hub-sdk.js";
+    import { TAGS, validateIdea, parseTags, pickRandom, searchableFields } from "./logic.js";
 
     const CONTEXT = window.__CONTEXT_URL ?? "";
     const DB      = window.__DB_URL      ?? "";
@@ -249,6 +259,7 @@
     let partner  = null;
     let partnerReciprocal = false;
     let ideas    = [];
+let searchQ = "";       // in-app search (see logic.js searchableFields)
     let modalEl  = null;
     let draftTags = [];
 
@@ -539,14 +550,28 @@
       renderIdeas();
     }
 
+    // Only the idea lists are redrawn, so the search box keeps focus.
+    document.addEventListener("input", (e) => {
+      if (e.target.id !== "search") return;
+      searchQ = e.target.value;
+      renderIdeas();
+    });
+
     function renderIdeas() {
-      const undone  = ideas.filter(i => !i.done_at);
-      const done    = ideas.filter(i => i.done_at).sort((a,b) => b.done_at.localeCompare(a.done_at));
+      // Only worth offering the box once there is a pile to search.
+      const searchRow = document.getElementById("search-row");
+      if (searchRow) searchRow.style.display = ideas.length ? "" : "none";
+      const matched = searchQ ? ideas.filter(i => searchMatch(searchQ, searchableFields(i))) : ideas;
+
+      const undone  = matched.filter(i => !i.done_at);
+      const done    = matched.filter(i => i.done_at).sort((a,b) => b.done_at.localeCompare(a.done_at));
 
       // Ideas tab
       const ideasEl = document.getElementById("ideas-list");
       if (!undone.length) {
-        ideasEl.innerHTML = `<div class="empty-state"><div class="empty-icon">🌙</div><p>No ideas yet — add your first one!</p></div>`;
+        ideasEl.innerHTML = searchQ
+          ? `<div class="empty-state"><div class="empty-icon">🔍</div><p>No ideas match "${esc(searchQ)}".</p></div>`
+          : `<div class="empty-state"><div class="empty-icon">🌙</div><p>No ideas yet — add your first one!</p></div>`;
       } else {
         ideasEl.innerHTML = undone.map(idea => renderIdeaCard(idea, false)).join("");
       }
@@ -554,7 +579,9 @@
       // History tab
       const histEl = document.getElementById("history-list");
       if (!done.length) {
-        histEl.innerHTML = `<div class="empty-state"><div class="empty-icon">📖</div><p>No completed dates yet.</p></div>`;
+        histEl.innerHTML = searchQ
+          ? `<div class="empty-state"><div class="empty-icon">🔍</div><p>Nothing completed matches "${esc(searchQ)}".</p></div>`
+          : `<div class="empty-state"><div class="empty-icon">📖</div><p>No completed dates yet.</p></div>`;
       } else {
         histEl.innerHTML = done.map(idea => renderIdeaCard(idea, true)).join("");
       }
