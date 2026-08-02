@@ -51,6 +51,13 @@
     }
   },
   "icon": "🌙",
+  "glance": {
+    "source": {
+      "kind": "sql",
+      "query": "SELECT COUNT(*) AS n FROM app_date_night_planner__date_ideas WHERE done_at IS NULL OR done_at = '' LIMIT 1"
+    },
+    "display": { "template": "badge", "count": "n", "label": "date ideas waiting", "severity": "info" }
+  },
   "nav": { "label": "Date Nights" },
   "kiosk": "never"
 }
