@@ -201,7 +201,7 @@
 <body>
 
   <!-- ── Setup view ── -->
-  <div id="view-setup" class="view">
+  <div id="view-setup" class="view" data-testid="view-setup">
     <div class="setup-wrap">
       <div class="setup-card">
         <div class="setup-icon">🌙</div>
@@ -216,7 +216,7 @@
   </div>
 
   <!-- ── Main view ── -->
-  <div id="view-main" class="view">
+  <div id="view-main" class="view" data-testid="view-main">
     <div class="app-header">
       <div class="app-header-left">
         <span class="icon">🌙</span>
@@ -231,7 +231,7 @@
       <button class="tab-btn active" onclick="switchTab('ideas',this)">Ideas</button>
       <button class="tab-btn" onclick="switchTab('history',this)">History</button>
     </div>
-    <div id="tab-ideas" class="tab-panel active">
+    <div id="tab-ideas" class="tab-panel active" data-testid="tab-ideas">
       <div class="surprise-bar">
         <p>Not sure what to do? Let us pick.</p>
         <button class="btn-primary" onclick="surpriseMe()">✨ Surprise Me</button>
@@ -241,7 +241,7 @@
       </div>
       <div id="ideas-list" class="ideas-list"></div>
     </div>
-    <div id="tab-history" class="tab-panel">
+    <div id="tab-history" class="tab-panel" data-testid="tab-history">
       <div id="history-list" class="ideas-list"></div>
     </div>
   </div>
@@ -599,7 +599,7 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
              <button class="btn-ghost" data-action="done" data-id="${esc(idea.id)}">✓ Done</button>
            </div>`;
       return `
-        <div class="idea-card${isDone ? " done" : ""}">
+        <div class="idea-card${isDone ? " done" : ""}" data-testid="idea-card" data-idea-id="${esc(idea.id)}" data-done="${isDone ? "yes" : "no"}">
           <div class="idea-header"><span class="idea-title">${esc(idea.title)}</span></div>
           ${notesHtml}${tagsHtml}${footer}
         </div>`;
