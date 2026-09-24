@@ -1,0 +1,144 @@
+{
+  "scenarios": [
+    {
+      "name": "reciprocal partners share the idea list; an outsider sees nothing",
+      "members": { "a": "adult", "b": "adult", "outsider": "adult" },
+      "steps": [
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_date_night_planner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?), (?, ?, ?)",
+          "params": ["{{a}}", "{{b}}", "sess-ab", "{{b}}", "{{a}}", "sess-ab"]
+        },
+        {
+          "action": "db",
+          "as": "a",
+          "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, session_id, title, notes, tags, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+          "params": ["di1", "{{a}}", "sess-ab", "Picnic at the lake", "bring blanket", "[\"outdoors\"]", "2026-01-01T00:00:00Z"],
+          "expect": { "status": 200 }
+        },
+        {
+          "action": "db",
+          "as": "b",
+          "sql": "SELECT id, title FROM app_date_night_planner__date_ideas",
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "id": "di1", "title": "Picnic at the lake" }] }
+        },
+        {
+          "action": "db",
+          "as": "a",
+          "sql": "SELECT id FROM app_date_night_planner__date_ideas",
+          "expect": { "status": 200, "rowCount": 1 }
+        },
+        {
+          "action": "db",
+          "as": "outsider",
+          "sql": "SELECT id FROM app_date_night_planner__date_ideas",
+          "expect": { "status": 200, "rowCount": 0 }
+        }
+      ]
+    },
+    {
+      "name": "a one-sided pairing does not expose the partner's ideas",
+      "members": { "a": "adult", "b": "adult" },
+      "steps": [
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_date_night_planner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)",
+          "params": ["{{a}}", "{{b}}", "sess-ab"]
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, session_id, title, created_at) VALUES (?, ?, ?, ?, ?)",
+          "params": ["di1", "{{b}}", "sess-ab", "B's idea", "2026-01-01T00:00:00Z"]
+        },
+        {
+          "action": "db",
+          "as": "a",
+          "sql": "SELECT id FROM app_date_night_planner__date_ideas",
+          "expect": { "status": 200, "rowCount": 0 }
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_date_night_planner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)",
+          "params": ["{{b}}", "{{a}}", "sess-ab"]
+        },
+        {
+          "action": "db",
+          "as": "a",
+          "sql": "SELECT id FROM app_date_night_planner__date_ideas",
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "id": "di1" }] }
+        }
+      ]
+    },
+    {
+      "name": "either partner can mark a shared idea done; an outsider's update changes nothing",
+      "members": { "a": "adult", "b": "adult", "outsider": "adult" },
+      "steps": [
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_date_night_planner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?), (?, ?, ?)",
+          "params": ["{{a}}", "{{b}}", "sess-ab", "{{b}}", "{{a}}", "sess-ab"]
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, session_id, title, created_at) VALUES (?, ?, ?, ?, ?)",
+          "params": ["di1", "{{a}}", "sess-ab", "Cooking class", "2026-01-01T00:00:00Z"]
+        },
+        {
+          "action": "db",
+          "as": "outsider",
+          "sql": "UPDATE app_date_night_planner__date_ideas SET done_at = ?, rating = ? WHERE id = ?",
+          "params": ["2026-01-03T00:00:00Z", 1, "di1"]
+        },
+        {
+          "action": "db",
+          "as": "a",
+          "sql": "SELECT id FROM app_date_night_planner__date_ideas WHERE done_at IS NULL",
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "id": "di1" }] }
+        },
+        {
+          "action": "db",
+          "as": "b",
+          "sql": "UPDATE app_date_night_planner__date_ideas SET done_at = ?, rating = ? WHERE id = ?",
+          "params": ["2026-01-02T00:00:00Z", 5, "di1"],
+          "expect": { "status": 200 }
+        },
+        {
+          "action": "db",
+          "as": "a",
+          "sql": "SELECT id, rating FROM app_date_night_planner__date_ideas WHERE done_at IS NOT NULL",
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "id": "di1", "rating": 5 }] }
+        }
+      ]
+    },
+    {
+      "name": "pairing rows are endpoint-only: a member cannot forge a partner_config row",
+      "members": { "a": "adult", "b": "adult" },
+      "steps": [
+        {
+          "action": "db",
+          "as": "a",
+          "sql": "INSERT INTO app_date_night_planner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)",
+          "params": ["{{a}}", "{{b}}", "forged"],
+          "expect": { "status": 403 }
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_date_night_planner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)",
+          "params": ["{{a}}", "{{b}}", "sess-ab"]
+        },
+        {
+          "action": "db",
+          "as": "a",
+          "sql": "SELECT partner_id, session_id FROM app_date_night_planner__partner_config",
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "session_id": "sess-ab" }] }
+        },
+        {
+          "action": "db",
+          "as": "b",
+          "sql": "SELECT member_id FROM app_date_night_planner__partner_config",
+          "expect": { "status": 200, "rowCount": 0 }
+        }
+      ]
+    }
+  ]
+}
