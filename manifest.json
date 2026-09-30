@@ -17,6 +17,9 @@
     "requires_approval": false
   },
   "storage": "db",
+  "preload": {
+    "ideas": { "sql": "SELECT * FROM app_date_night_planner__date_ideas ORDER BY created_at DESC" }
+  },
   "partner_link": {
     "table": "partner_config",
     "member_column": "member_id",
