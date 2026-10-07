@@ -39,7 +39,7 @@
       border-radius: var(--hub-radius, 8px);
       padding: 32px; max-width: 420px; width: 100%; text-align: center;
     }
-    .setup-icon { font-size: 2.5rem; margin-bottom: 16px; }
+    .setup-icon { margin-bottom: 16px; }
     .setup-card h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
     .setup-card .setup-desc { color: var(--hub-text-muted, #6b7280); font-size: 0.9rem; margin-bottom: 24px; }
     .setup-card .pick-label { font-weight: 600; margin-bottom: 12px; text-align: left; display: block; }
@@ -104,14 +104,14 @@
 
     /* ── Empty state ── */
     .empty-state { text-align: center; padding: 48px 20px; color: var(--hub-text-muted, #6b7280); }
-    .empty-state .empty-icon { font-size: 2rem; margin-bottom: 12px; }
+    .empty-state .empty-icon { margin-bottom: 12px; }
     .empty-state p { font-size: 0.95rem; }
 
     /* ── Reveal modal (Surprise Me) ── */
     .reveal-card {
       text-align: center; padding: 8px 0 16px;
     }
-    .reveal-emoji { font-size: 2.5rem; margin-bottom: 12px; }
+    .reveal-emoji { margin-bottom: 12px; }
     .reveal-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
     .reveal-tags { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 8px; }
     .reveal-notes { font-size: 0.9rem; color: var(--hub-text-muted, #6b7280); margin-bottom: 16px; white-space: pre-wrap; }
@@ -204,7 +204,7 @@
   <div id="view-setup" class="view" data-testid="view-setup">
     <div class="setup-wrap">
       <div class="setup-card">
-        <div class="setup-icon">🌙</div>
+        <div class="setup-icon" id="setup-glyph"></div>
         <h2>Date Night Planner</h2>
         <p class="setup-desc">Build a shared list of date ideas. Tap "Surprise Me" whenever you need inspiration.</p>
         <span class="pick-label">Who is your partner?</span>
@@ -219,11 +219,11 @@
   <div id="view-main" class="view" data-testid="view-main">
     <div class="app-header">
       <div class="app-header-left">
-        <span class="icon">🌙</span>
+        <span class="icon" id="header-glyph"></span>
         <h1>Date Nights</h1>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
-        <button class="btn-icon" title="Change partner" onclick="showSetup()">⚙️</button>
+        <button class="btn-icon" id="partner-btn" title="Change partner" aria-label="Change partner" onclick="showSetup()"></button>
         <button class="btn-primary" onclick="openAddIdea()">+ Add Idea</button>
       </div>
     </div>
@@ -234,7 +234,7 @@
     <div id="tab-ideas" class="tab-panel active" data-testid="tab-ideas">
       <div class="surprise-bar">
         <p>Not sure what to do? Let us pick.</p>
-        <button class="btn-primary" onclick="surpriseMe()">✨ Surprise Me</button>
+        <button class="btn-primary" onclick="surpriseMe()"><span id="surprise-glyph"></span> Surprise Me</button>
       </div>
       <div class="search-row" id="search-row" style="display:none">
         <input id="search" class="search-input" type="search" placeholder="Search ideas…" aria-label="Search ideas" />
@@ -247,8 +247,14 @@
   </div>
 
   <script type="module">
-    import { esc, initial, memberColor, formatRelativeDate, searchMatch } from "/hub-sdk.js";
+    import { esc, initial, memberColor, formatRelativeDate, searchMatch, glyph, chickadee } from "/hub-sdk.js";
     import { TAGS, validateIdea, parseTags, pickRandom, searchableFields } from "./logic.js";
+
+    // Static markup cannot call the SDK helpers; fill these marks from script.
+    document.getElementById("setup-glyph").innerHTML = chickadee("pair");
+    document.getElementById("header-glyph").innerHTML = glyph("moon");
+    document.getElementById("partner-btn").innerHTML = glyph("gear");
+    document.getElementById("surprise-glyph").innerHTML = glyph("sparkles", { accent: "currentColor" });
 
     const CONTEXT = window.__CONTEXT_URL ?? "";
     const DB      = window.__DB_URL      ?? "";
@@ -444,7 +450,7 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
       if (!pick) {
         openModal(`
           <div class="reveal-card">
-            <div class="reveal-emoji">🤔</div>
+            <div class="reveal-emoji">${chickadee("nest")}</div>
             <div class="reveal-title">No ideas yet!</div>
             <p style="color:var(--hub-text-muted,#6b7280);font-size:.9rem;margin-bottom:16px">Add some ideas first, then let us surprise you.</p>
             <div class="reveal-actions">
@@ -457,13 +463,13 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
       const tags = parseTags(pick.tags);
       openModal(`
         <div class="reveal-card">
-          <div class="reveal-emoji">🌙</div>
+          <div class="reveal-emoji">${chickadee("celebrating")}</div>
           <div class="reveal-title">${esc(pick.title)}</div>
           ${tags.length ? `<div class="reveal-tags">${tags.map(t => `<span class="idea-tag">${esc(t)}</span>`).join("")}</div>` : ""}
           ${pick.notes ? `<div class="reveal-notes">${esc(pick.notes)}</div>` : ""}
           <div class="reveal-actions">
             <button class="btn-secondary" onclick="surpriseMe()">Try another</button>
-            <button class="btn-primary" data-action="done" data-id="${esc(pick.id)}">We did this! ✓</button>
+            <button class="btn-primary" data-action="done" data-id="${esc(pick.id)}">We did this! ${glyph("tick", { accent: "currentColor" })}</button>
           </div>
         </div>
       `);
@@ -573,8 +579,8 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
       const ideasEl = document.getElementById("ideas-list");
       if (!undone.length) {
         ideasEl.innerHTML = searchQ
-          ? `<div class="empty-state"><div class="empty-icon">🔍</div><p>No ideas match "${esc(searchQ)}".</p></div>`
-          : `<div class="empty-state"><div class="empty-icon">🌙</div><p>No ideas yet — add your first one!</p></div>`;
+          ? `<div class="empty-state"><div class="empty-icon">${chickadee("searching")}</div><p>No ideas match "${esc(searchQ)}".</p></div>`
+          : `<div class="empty-state"><div class="empty-icon">${chickadee("nest")}</div><p>No ideas yet — add your first one!</p></div>`;
       } else {
         ideasEl.innerHTML = undone.map(idea => renderIdeaCard(idea, false)).join("");
       }
@@ -583,8 +589,8 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
       const histEl = document.getElementById("history-list");
       if (!done.length) {
         histEl.innerHTML = searchQ
-          ? `<div class="empty-state"><div class="empty-icon">🔍</div><p>Nothing completed matches "${esc(searchQ)}".</p></div>`
-          : `<div class="empty-state"><div class="empty-icon">📖</div><p>No completed dates yet.</p></div>`;
+          ? `<div class="empty-state"><div class="empty-icon">${chickadee("searching")}</div><p>Nothing completed matches "${esc(searchQ)}".</p></div>`
+          : `<div class="empty-state"><div class="empty-icon">${chickadee("nest")}</div><p>No completed dates yet.</p></div>`;
       } else {
         histEl.innerHTML = done.map(idea => renderIdeaCard(idea, true)).join("");
       }
@@ -599,7 +605,7 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
       const footer = isDone
         ? `<div class="idea-footer"><span class="idea-meta">${formatRelativeDate(idea.done_at)}</span>${starsHtml}</div>`
         : `<div class="idea-footer"><span class="idea-meta">${formatRelativeDate(idea.created_at)}</span>
-             <button class="btn-ghost" data-action="done" data-id="${esc(idea.id)}">✓ Done</button>
+             <button class="btn-ghost" data-action="done" data-id="${esc(idea.id)}">${glyph("tick")} Done</button>
            </div>`;
       return `
         <div class="idea-card${isDone ? " done" : ""}" data-testid="idea-card" data-idea-id="${esc(idea.id)}" data-done="${isDone ? "yes" : "no"}">
