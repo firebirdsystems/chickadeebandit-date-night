@@ -1,0 +1,638 @@
+{
+ "seed": [
+  {
+   "sql": "INSERT INTO app_date_night_planner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)",
+   "params": [
+    "{{me}}",
+    "{{partner}}",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)",
+   "params": [
+    "{{partner}}",
+    "{{me}}",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT10:07:00Z','now','-43 days'), ?)",
+   "params": [
+    "perf-dn-01",
+    "{{me}}",
+    "Sunset picnic at the park",
+    "Book at least a week ahead",
+    "[\"outdoors\",\"budget\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT11:14:00Z','now','-84 days'), ?)",
+   "params": [
+    "perf-dn-02",
+    "{{partner}}",
+    "Tasting menu at Ostra",
+    "Half price on Tuesdays",
+    "[\"restaurant\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-121 days'), ?, strftime('%Y-%m-%dT12:21:00Z','now','-125 days'), ?)",
+   "params": [
+    "perf-dn-03",
+    "{{me}}",
+    "Board games and takeout",
+    "Sitter needed, ask Grandma",
+    "[\"stay-in\",\"budget\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT13:28:00Z','now','-6 days'), ?)",
+   "params": [
+    "perf-dn-04",
+    "{{partner}}",
+    "Rock climbing gym intro night",
+    "Closes at 10 on weeknights",
+    "[\"adventure\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT14:35:00Z','now','-47 days'), ?)",
+   "params": [
+    "perf-dn-05",
+    "{{me}}",
+    "Jazz at the Blue Room",
+    "[\"culture\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-81 days'), ?, strftime('%Y-%m-%dT15:42:00Z','now','-88 days'), ?)",
+   "params": [
+    "perf-dn-06",
+    "{{partner}}",
+    "Cook a recipe neither of us has tried",
+    "[\"stay-in\",\"budget\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT16:49:00Z','now','-129 days'), ?)",
+   "params": [
+    "perf-dn-07",
+    "{{me}}",
+    "Kayak the river at dusk",
+    "Bring the good blanket",
+    "[\"outdoors\",\"adventure\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT17:56:00Z','now','-10 days'), ?)",
+   "params": [
+    "perf-dn-08",
+    "{{partner}}",
+    "Late show at the comedy club",
+    "Book at least a week ahead",
+    "[\"culture\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-41 days'), ?, strftime('%Y-%m-%dT18:03:00Z','now','-51 days'), ?)",
+   "params": [
+    "perf-dn-09",
+    "{{me}}",
+    "Night market food crawl",
+    "Half price on Tuesdays",
+    "[\"restaurant\",\"budget\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT19:10:00Z','now','-92 days'), ?)",
+   "params": [
+    "perf-dn-10",
+    "{{partner}}",
+    "Drive-in double feature",
+    "Sitter needed, ask Grandma",
+    "[\"culture\",\"budget\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT09:17:00Z','now','-133 days'), ?)",
+   "params": [
+    "perf-dn-11",
+    "{{me}}",
+    "Stargazing at the observatory",
+    "Closes at 10 on weeknights",
+    "[\"outdoors\",\"culture\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-1 days'), ?, strftime('%Y-%m-%dT10:24:00Z','now','-14 days'), ?)",
+   "params": [
+    "perf-dn-12",
+    "{{partner}}",
+    "Paint and sip at home",
+    "[\"stay-in\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT11:31:00Z','now','-55 days'), ?)",
+   "params": [
+    "perf-dn-13",
+    "{{me}}",
+    "Hot springs day trip",
+    "[\"outdoors\",\"adventure\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT12:38:00Z','now','-96 days'), ?)",
+   "params": [
+    "perf-dn-14",
+    "{{partner}}",
+    "Wine bar and a walk downtown",
+    "Bring the good blanket",
+    "[\"restaurant\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-121 days'), ?, strftime('%Y-%m-%dT13:45:00Z','now','-137 days'), ?)",
+   "params": [
+    "perf-dn-15",
+    "{{me}}",
+    "Museum late opening",
+    "Book at least a week ahead",
+    "[\"culture\",\"budget\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT14:52:00Z','now','-18 days'), ?)",
+   "params": [
+    "perf-dn-16",
+    "{{partner}}",
+    "Escape room downtown",
+    "Half price on Tuesdays",
+    "[\"adventure\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT15:59:00Z','now','-59 days'), ?)",
+   "params": [
+    "perf-dn-17",
+    "{{me}}",
+    "Homemade pizza night",
+    "Sitter needed, ask Grandma",
+    "[\"stay-in\",\"budget\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-81 days'), ?, strftime('%Y-%m-%dT16:06:00Z','now','-100 days'), ?)",
+   "params": [
+    "perf-dn-18",
+    "{{partner}}",
+    "Sushi counter at Kaito",
+    "Closes at 10 on weeknights",
+    "[\"restaurant\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT17:13:00Z','now','-141 days'), ?)",
+   "params": [
+    "perf-dn-19",
+    "{{me}}",
+    "Bike the lakeside trail",
+    "[\"outdoors\",\"budget\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT18:20:00Z','now','-22 days'), ?)",
+   "params": [
+    "perf-dn-20",
+    "{{partner}}",
+    "Go-kart racing",
+    "[\"adventure\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-61 days'), ?, strftime('%Y-%m-%dT19:27:00Z','now','-63 days'), ?)",
+   "params": [
+    "perf-dn-21",
+    "{{me}}",
+    "Open-air cinema in the square",
+    "Bring the good blanket",
+    "[\"culture\",\"outdoors\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT09:34:00Z','now','-104 days'), ?)",
+   "params": [
+    "perf-dn-22",
+    "{{partner}}",
+    "Fondue and old movies",
+    "Book at least a week ahead",
+    "[\"stay-in\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT10:41:00Z','now','-145 days'), ?)",
+   "params": [
+    "perf-dn-23",
+    "{{me}}",
+    "Dance class drop-in",
+    "Half price on Tuesdays",
+    "[\"adventure\",\"culture\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-21 days'), ?, strftime('%Y-%m-%dT11:48:00Z','now','-26 days'), ?)",
+   "params": [
+    "perf-dn-24",
+    "{{partner}}",
+    "Oyster happy hour",
+    "Sitter needed, ask Grandma",
+    "[\"restaurant\",\"budget\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT12:55:00Z','now','-67 days'), ?)",
+   "params": [
+    "perf-dn-25",
+    "{{me}}",
+    "Botanical garden light show",
+    "Closes at 10 on weeknights",
+    "[\"outdoors\",\"culture\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT13:02:00Z','now','-108 days'), ?)",
+   "params": [
+    "perf-dn-26",
+    "{{partner}}",
+    "Build a blanket fort and watch a trilogy",
+    "[\"stay-in\",\"budget\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-141 days'), ?, strftime('%Y-%m-%dT14:09:00Z','now','-149 days'), ?)",
+   "params": [
+    "perf-dn-27",
+    "{{me}}",
+    "Ferry ride and fish and chips",
+    "[\"outdoors\",\"restaurant\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT15:16:00Z','now','-30 days'), ?)",
+   "params": [
+    "perf-dn-28",
+    "{{partner}}",
+    "Axe throwing",
+    "Bring the good blanket",
+    "[\"adventure\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT16:23:00Z','now','-71 days'), ?)",
+   "params": [
+    "perf-dn-29",
+    "{{me}}",
+    "Live theatre: whatever is on Friday",
+    "Book at least a week ahead",
+    "[\"culture\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-101 days'), ?, strftime('%Y-%m-%dT17:30:00Z','now','-112 days'), ?)",
+   "params": [
+    "perf-dn-30",
+    "{{partner}}",
+    "Dessert-only dinner",
+    "Half price on Tuesdays",
+    "[\"restaurant\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT18:37:00Z','now','-153 days'), ?)",
+   "params": [
+    "perf-dn-31",
+    "{{me}}",
+    "Sunrise hike and diner breakfast",
+    "Sitter needed, ask Grandma",
+    "[\"outdoors\",\"adventure\",\"budget\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT19:44:00Z','now','-34 days'), ?)",
+   "params": [
+    "perf-dn-32",
+    "{{partner}}",
+    "Karaoke room for two",
+    "Closes at 10 on weeknights",
+    "[\"adventure\",\"culture\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-61 days'), ?, strftime('%Y-%m-%dT09:51:00Z','now','-75 days'), ?)",
+   "params": [
+    "perf-dn-33",
+    "{{me}}",
+    "Spa night at home",
+    "[\"stay-in\",\"budget\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT10:58:00Z','now','-116 days'), ?)",
+   "params": [
+    "perf-dn-34",
+    "{{partner}}",
+    "Tapas at Bodega Nueve",
+    "[\"restaurant\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT11:05:00Z','now','-157 days'), ?)",
+   "params": [
+    "perf-dn-35",
+    "{{me}}",
+    "Bookshop date: pick a book for each other",
+    "Bring the good blanket",
+    "[\"culture\",\"budget\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-21 days'), ?, strftime('%Y-%m-%dT12:12:00Z','now','-38 days'), ?)",
+   "params": [
+    "perf-dn-36",
+    "{{partner}}",
+    "Indoor skydiving",
+    "Book at least a week ahead",
+    "[\"adventure\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT13:19:00Z','now','-79 days'), ?)",
+   "params": [
+    "perf-dn-37",
+    "{{me}}",
+    "Farmers market then cook together",
+    "Half price on Tuesdays",
+    "[\"outdoors\",\"stay-in\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT14:26:00Z','now','-120 days'), ?)",
+   "params": [
+    "perf-dn-38",
+    "{{partner}}",
+    "Rooftop cocktails",
+    "Sitter needed, ask Grandma",
+    "[\"restaurant\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-141 days'), ?, strftime('%Y-%m-%dT15:33:00Z','now','-161 days'), ?)",
+   "params": [
+    "perf-dn-39",
+    "{{me}}",
+    "Arcade and pinball bar",
+    "Closes at 10 on weeknights",
+    "[\"adventure\",\"budget\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT16:40:00Z','now','-42 days'), ?)",
+   "params": [
+    "perf-dn-40",
+    "{{partner}}",
+    "Ice skating downtown",
+    "[\"outdoors\",\"adventure\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT17:47:00Z','now','-83 days'), ?)",
+   "params": [
+    "perf-dn-41",
+    "{{me}}",
+    "Trivia night at the pub",
+    "[\"culture\",\"budget\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-121 days'), ?, strftime('%Y-%m-%dT18:54:00Z','now','-124 days'), ?)",
+   "params": [
+    "perf-dn-42",
+    "{{partner}}",
+    "Puzzle and a playlist",
+    "Bring the good blanket",
+    "[\"stay-in\",\"budget\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT19:01:00Z','now','-5 days'), ?)",
+   "params": [
+    "perf-dn-43",
+    "{{me}}",
+    "Thai cooking class",
+    "Book at least a week ahead",
+    "[\"restaurant\",\"adventure\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT09:08:00Z','now','-46 days'), ?)",
+   "params": [
+    "perf-dn-44",
+    "{{partner}}",
+    "Symphony in the park",
+    "Half price on Tuesdays",
+    "[\"culture\",\"outdoors\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-81 days'), ?, strftime('%Y-%m-%dT10:15:00Z','now','-87 days'), ?)",
+   "params": [
+    "perf-dn-45",
+    "{{me}}",
+    "Mini golf rematch",
+    "Sitter needed, ask Grandma",
+    "[\"adventure\",\"budget\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT11:22:00Z','now','-128 days'), ?)",
+   "params": [
+    "perf-dn-46",
+    "{{partner}}",
+    "Fire pit and s'mores",
+    "Closes at 10 on weeknights",
+    "[\"outdoors\",\"stay-in\",\"budget\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT12:29:00Z','now','-9 days'), ?)",
+   "params": [
+    "perf-dn-47",
+    "{{me}}",
+    "Ramen and a late movie",
+    "[\"restaurant\",\"culture\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-41 days'), ?, strftime('%Y-%m-%dT13:36:00Z','now','-50 days'), ?)",
+   "params": [
+    "perf-dn-48",
+    "{{partner}}",
+    "Pottery date",
+    "[\"culture\",\"adventure\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT14:43:00Z','now','-91 days'), ?)",
+   "params": [
+    "perf-dn-49",
+    "{{me}}",
+    "Breakfast for dinner",
+    "Bring the good blanket",
+    "[\"stay-in\",\"budget\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT15:50:00Z','now','-132 days'), ?)",
+   "params": [
+    "perf-dn-50",
+    "{{partner}}",
+    "Gallery walk on First Friday",
+    "Book at least a week ahead",
+    "[\"culture\",\"budget\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-1 days'), ?, strftime('%Y-%m-%dT16:57:00Z','now','-13 days'), ?)",
+   "params": [
+    "perf-dn-51",
+    "{{me}}",
+    "Paddleboard at the reservoir",
+    "Half price on Tuesdays",
+    "[\"outdoors\",\"adventure\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT17:04:00Z','now','-54 days'), ?)",
+   "params": [
+    "perf-dn-52",
+    "{{partner}}",
+    "Chef's counter at Lumen",
+    "Sitter needed, ask Grandma",
+    "[\"restaurant\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT18:11:00Z','now','-95 days'), ?)",
+   "params": [
+    "perf-dn-53",
+    "{{me}}",
+    "Video game co-op marathon",
+    "Closes at 10 on weeknights",
+    "[\"stay-in\",\"budget\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, done_at, rating, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT21:30:00Z','now','-121 days'), ?, strftime('%Y-%m-%dT19:18:00Z','now','-136 days'), ?)",
+   "params": [
+    "perf-dn-54",
+    "{{partner}}",
+    "Ghost tour of the old town",
+    "[\"culture\",\"adventure\"]",
+    3,
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, tags, created_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT09:25:00Z','now','-17 days'), ?)",
+   "params": [
+    "perf-dn-55",
+    "{{me}}",
+    "Beach bonfire",
+    "[\"outdoors\",\"budget\"]",
+    "perf-datenight-session"
+   ]
+  },
+  {
+   "sql": "INSERT INTO app_date_night_planner__date_ideas (id, created_by, title, notes, tags, created_at, session_id) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT10:32:00Z','now','-58 days'), ?)",
+   "params": [
+    "perf-dn-56",
+    "{{partner}}",
+    "Plan next year's trip over wine",
+    "Bring the good blanket",
+    "[\"stay-in\"]",
+    "perf-datenight-session"
+   ]
+  }
+ ]
+}
