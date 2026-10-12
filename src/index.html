@@ -196,9 +196,21 @@
       background: var(--surface, var(--card, #fff)); color: var(--text, inherit);
     }
     .search-input:focus { outline: none; border-color: var(--accent, #6366f1); }
+    .load-error {
+      margin: 12px 16px; padding: 10px 14px; border-radius: var(--hub-radius, 8px);
+      background: var(--hub-tint-danger, #fee2e2); color: var(--hub-tint-danger-fg, #b91c1c);
+      font-size: 0.9rem; display: flex; gap: 10px; align-items: center; justify-content: space-between;
+    }
+    .load-error[hidden] { display: none; }
+    .load-error-retry {
+      background: none; border: 1px solid currentColor; border-radius: var(--hub-radius, 8px);
+      padding: 4px 10px; color: inherit; font: inherit; cursor: pointer; white-space: nowrap;
+    }
   </style>
 </head>
 <body>
+
+  <div id="load-error" class="load-error" data-testid="load-error" role="alert" hidden><span>Couldn’t load your partner.</span> <button type="button" class="load-error-retry" data-testid="load-retry">Try again</button></div>
 
   <!-- ── Setup view ── -->
   <div id="view-setup" class="view" data-testid="view-setup">
@@ -247,7 +259,7 @@
   </div>
 
   <script type="module">
-    import { esc, initial, memberColor, formatRelativeDate, searchMatch, glyph, chickadee } from "/hub-sdk.js";
+    import { esc, initial, memberColor, formatRelativeDate, searchMatch, glyph, chickadee, hubAlert } from "/hub-sdk.js";
     import { TAGS, validateIdea, parseTags, pickRandom, searchableFields } from "./logic.js";
 
     // Static markup cannot call the SDK helpers; fill these marks from script.
@@ -276,7 +288,9 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sql, params }),
       });
-      return res.json();
+      const json = await res.json().catch(() => null);
+      if (!res.ok || !json || typeof json !== "object" || json.error) throw new Error(json?.error || "Couldn’t reach the hub. Try again.");
+      return json;
     }
 
     async function loadMembers() {
@@ -288,18 +302,36 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
         ];
         return;
       }
-      try {
-        const res = await fetch(`${CONTEXT}?keys=family.members`);
-        members = ((await res.json())["family.members"]) ?? [];
-      } catch { members = []; }
+      // A member list that could not be read is a failed load, not a household with nobody in it.
+      const res = await fetch(`${CONTEXT}?keys=family.members`);
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data || typeof data !== "object" || data.error || (Array.isArray(data.$errors) && data.$errors.includes("family.members"))) throw new Error("Couldn’t reach the hub. Try again.");
+      members = data["family.members"] ?? [];
     }
 
+    // An unpaired member is answered 200 with partner_id null. Any other answer
+    // is a failed read and throws: it is not "no partner yet".
     async function loadPartner() {
       if (!ME) return { partner_id: null, reciprocal: false };
-      try {
-        const res = await fetch(`/run/${APP_ID}/api/partner`);
-        return res.ok ? await res.json() : { partner_id: null, reciprocal: false };
-      } catch { return { partner_id: null, reciprocal: false }; }
+      const res = await fetch(`/run/${APP_ID}/api/partner`);
+      if (!res.ok) throw new Error("partner unavailable");
+      const status = await res.json();
+      if (!status || typeof status !== "object" || !("partner_id" in status)) throw new Error("partner unavailable");
+      return status;
+    }
+
+    // The first load failed: a banner that stays until a load succeeds. While
+    // it shows, unread lists are not drawn as empty ones.
+    let loadFailed = false;
+    function showLoadError(thing) {
+      loadFailed = true;
+      const banner = document.getElementById("load-error");
+      banner.querySelector("span").textContent = `Couldn’t load ${thing}.`;
+      banner.hidden = false;
+    }
+    function clearLoadError() {
+      loadFailed = false;
+      document.getElementById("load-error").hidden = true;
     }
 
     async function loadIdeas() {
@@ -437,9 +469,10 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
           "INSERT INTO app_date_night_planner__date_ideas (id, created_by, session_id, title, notes, tags, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
           [id, ME.id, null, title, notes, tags, now]
         );
-      } catch {
+      } catch (e) {
         ideas = ideas.filter(i => i !== optimisticIdea);
         renderIdeas();
+        hubAlert("That could not be added.", { description: e.message });
       }
     };
 
@@ -515,13 +548,16 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
 
       if (!ME) return;
       try {
-        await db(
+        const res = await db(
           "UPDATE app_date_night_planner__date_ideas SET done_at = ?, rating = ? WHERE id = ?",
           [now, rating, id]
         );
-      } catch {
+        // The row policy narrows a write it will not allow to zero rows.
+        if (res.changed === 0) throw new Error("This can no longer be changed.");
+      } catch (e) {
         if (idea) { idea.done_at = origDoneAt; idea.rating = origRating; }
         renderIdeas();
+        hubAlert(e.message);
       }
     };
 
@@ -580,7 +616,8 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
       if (!undone.length) {
         ideasEl.innerHTML = searchQ
           ? `<div class="empty-state"><div class="empty-icon">${chickadee("searching")}</div><p>No ideas match "${esc(searchQ)}".</p></div>`
-          : `<div class="empty-state"><div class="empty-icon">${chickadee("nest")}</div><p>No ideas yet — add your first one!</p></div>`;
+          : loadFailed && !ideas.length ? ""
+          : `<div class="empty-state" data-testid="empty-state"><div class="empty-icon">${chickadee("nest")}</div><p>No ideas yet — add your first one!</p></div>`;
       } else {
         ideasEl.innerHTML = undone.map(idea => renderIdeaCard(idea, false)).join("");
       }
@@ -590,6 +627,7 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
       if (!done.length) {
         histEl.innerHTML = searchQ
           ? `<div class="empty-state"><div class="empty-icon">${chickadee("searching")}</div><p>Nothing completed matches "${esc(searchQ)}".</p></div>`
+          : loadFailed && !ideas.length ? ""
           : `<div class="empty-state"><div class="empty-icon">${chickadee("nest")}</div><p>No completed dates yet.</p></div>`;
       } else {
         histEl.innerHTML = done.map(idea => renderIdeaCard(idea, true)).join("");
@@ -624,17 +662,35 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
     });
 
     // ── Init ──────────────────────────────────────────────────────────────────
-    (async () => {
-      const [, status] = await Promise.all([loadMembers(), loadPartner()]);
+    async function start() {
+      let status;
+      try {
+        [, status] = await Promise.all([loadMembers(), loadPartner()]);
+      } catch {
+        // Neither view opens: a member whose pairing could not be read is not sent to setup.
+        showLoadError("your partner");
+        return;
+      }
       partnerReciprocal = status.reciprocal;
       partner = status.partner_id ? (members.find(m => m.id === status.partner_id) ?? null) : null;
       if (!partner || !partnerReciprocal) {
+        clearLoadError();
         window.showSetup();
-      } else {
-        await loadIdeas();
-        showMain();
+        return;
       }
-    })();
+      try {
+        await loadIdeas();
+      } catch {
+        // The list view still opens when its ideas cannot be read, with the banner above it.
+        showLoadError("your date ideas");
+        showMain();
+        return;
+      }
+      clearLoadError();
+      showMain();
+    }
+    document.querySelector('[data-testid="load-retry"]').addEventListener("click", start);
+    start();
   </script>
 </body>
 </html>
