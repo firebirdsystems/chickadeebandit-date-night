@@ -366,7 +366,13 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ partner_id: partnerId }),
         }) : null;
-        if (res && !res.ok) throw new Error((await res.json()).error ?? "Could not save partner");
+        if (res && !res.ok) {
+          // A refusal (4xx) is the hub's answer about this choice and is shown
+          // as given; any other failure gets this page's own line below.
+          const refusal = (await res.json().catch(() => null))?.error;
+          const refused = res.status >= 400 && res.status < 500 && typeof refusal === "string" && !!refusal;
+          throw Object.assign(new Error(refusal || `partner ${res.status}`), { forUser: refused });
+        }
         const status = res ? await res.json() : { reciprocal: true };
         partnerReciprocal = status.reciprocal;
         partner = members.find(m => m.id === partnerId) ?? null;
@@ -380,7 +386,8 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
         showMain();
       } catch(e) {
         if (btn) { btn.disabled = false; btn.textContent = "Get Started"; }
-        if (errEl) { errEl.textContent = e?.message ?? "Could not save partner"; errEl.style.display = "block"; }
+        if (!e?.forUser) console.error(e);
+        if (errEl) { errEl.textContent = e?.forUser ? e.message : "Couldn’t save your partner — try again."; errEl.style.display = "block"; }
       }
     };
 
@@ -472,7 +479,8 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
       } catch (e) {
         ideas = ideas.filter(i => i !== optimisticIdea);
         renderIdeas();
-        hubAlert("That could not be added.", { description: e.message });
+        console.error(e);
+        hubAlert("Couldn’t add the idea — try again.");
       }
     };
 
@@ -553,11 +561,12 @@ let searchQ = "";       // in-app search (see logic.js searchableFields)
           [now, rating, id]
         );
         // The row policy narrows a write it will not allow to zero rows.
-        if (res.changed === 0) throw new Error("This can no longer be changed.");
+        if (res.changed === 0) throw Object.assign(new Error("This can no longer be changed."), { forUser: true });
       } catch (e) {
         if (idea) { idea.done_at = origDoneAt; idea.rating = origRating; }
         renderIdeas();
-        hubAlert(e.message);
+        if (!e?.forUser) console.error(e);
+        hubAlert(e?.forUser ? e.message : "Couldn’t save — try again.");
       }
     };
 
