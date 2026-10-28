@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS app_date_night_planner__partner_config (
 );
 
 CREATE TABLE IF NOT EXISTS app_date_night_planner__date_ideas (
-  id TEXT PRIMARY KEY,
+  id TEXT NOT NULL PRIMARY KEY,
   created_by TEXT NOT NULL,
   title TEXT NOT NULL,
   notes TEXT,
